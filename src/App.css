@@ -6,7 +6,7 @@
 
 @theme{
   /* Colors */
-  --color-bg: #09090B;
+  --color-bg: #000000;
   --color-text: #FFFFFF;
   --color-theme: #22D3EE;
 
@@ -16,11 +16,7 @@
 }
 
 body {
-  @apply  bg-[var(--color-bg)] text-[var(--color-text)] px-10 font-[var(--font-Geist)];
-}
-
-section {
-  @apply py-10;
+  @apply  bg-[var(--color-bg)] text-[var(--color-text)] font-[var(--font-Geist)];
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -31,8 +27,16 @@ h1{
   @apply text-6xl font-bold;
 }
 
+h2{
+  @apply text-3xl font-semibold;
+}
+
 p, .subtitle {
   @apply font-[var(--font-Geist)];
+}
+
+p{
+  @apply text-sm font-light;
 }
 
 .subtitle {
@@ -41,4 +45,16 @@ p, .subtitle {
 
 .capsule{
   @apply w-fit inline-block px-4 py-1 rounded-full border bg-theme/6 border-[var(--color-theme)] text-[var(--color-theme)] font-Geist font-mono text-sm font-light shadow-[0px_0px_100px] shadow-theme/50 transition-all duration-300;
+}
+
+.container{
+  @apply max-w-svw mx-auto px-10 py-10;
+}
+
+.ghost-text{
+  @apply text-sm font-light text-theme tracking-normal uppercase font-Geist font-mono;
+}
+
+.gray-section{
+  @apply bg-[#1F2937] w-full h-fit py-10 px-10 flex-wrap gap-5 flex flex-col justify-center items-center min-h-50;
 }

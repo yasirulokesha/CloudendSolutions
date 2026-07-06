@@ -1,3 +1,5 @@
+import { motion } from "motion/react";
+
 export const Capsule = ({
   text,
   className,
@@ -46,10 +48,47 @@ export const Button = ({
         (varient === "link"
           ? " bg-transparent text-theme underline hover:text-theme/50"
           : "") +
-        (varient === "default" ? " bg-linear-to-l from-0% to-100% from-theme/80 to-theme/30 text-white hover:bg-theme/50 hover:outline-3  outline-theme/50 outline-offset-0" : "")
+        (varient === "default"
+          ? " bg-linear-to-l from-0% to-100% from-theme/80 to-theme/30 text-white hover:bg-theme/50 hover:outline-2  outline-theme/50 outline-offset-0"
+          : "")
       }
     >
       {text}
     </button>
+  );
+};
+
+export const ServiceCard = ({
+  icon,
+  title,
+  description,
+  className,
+  style,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  className?: string;
+  style?: React.CSSProperties;
+}) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.4 }}
+      transition={{ duration: 0.5 }}
+      className={
+        "group shrink-0 w-65 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl transition-all duration-300 hover:border-theme/50 hover:bg-theme/5" +
+        " " +
+        (className ?? "")
+      }
+      style={style}
+    >
+      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-theme/10 text-theme transition-colors duration-300 group-hover:bg-theme/20">
+        {icon}
+      </div>
+      <h3 className="mt-4 text-lg font-semibold">{title}</h3>
+      <p className="mt-2 text-[#9CA3AF]">{description}</p>
+    </motion.div>
   );
 };
