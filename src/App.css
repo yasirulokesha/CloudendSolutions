@@ -1,1 +1,44 @@
 @import "tailwindcss";
+
+@layer base {
+  @import url('https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&family=Geist:ital,wght@0,100..900;1,100..900&display=swap');
+}
+
+@theme{
+  /* Colors */
+  --color-bg: #09090B;
+  --color-text: #FFFFFF;
+  --color-theme: #22D3EE;
+
+  /* Fonts */
+  --font-Gabarito: 'Gabarito', sans-serif;
+  --font-Geist: 'Geist', sans-serif;
+}
+
+body {
+  @apply  bg-[var(--color-bg)] text-[var(--color-text)] px-10 font-[var(--font-Geist)];
+}
+
+section {
+  @apply py-10;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-[var(--font-Gabarito)];
+}
+
+h1{
+  @apply text-6xl font-bold;
+}
+
+p, .subtitle {
+  @apply font-[var(--font-Geist)];
+}
+
+.subtitle {
+  @apply text-gray-400 font-semibold;
+}
+
+.capsule{
+  @apply w-fit inline-block px-4 py-1 rounded-full border bg-theme/6 border-[var(--color-theme)] text-[var(--color-theme)] font-Geist font-mono text-sm font-light shadow-[0px_0px_100px] shadow-theme/50 transition-all duration-300;
+}
