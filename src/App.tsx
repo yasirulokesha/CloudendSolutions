@@ -2,7 +2,6 @@ import "./App.css";
 import {
   motion,
   useScroll,
-  useSpring,
   useTransform,
   useMotionValueEvent,
   AnimatePresence,
@@ -198,6 +197,7 @@ function App() {
 
   const handleContactSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    alert(`Thank you for reaching out! We'll contact you at ${contactEmail}.`);
     setContactSubmitted(true);
   };
 
@@ -221,19 +221,6 @@ function App() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
-
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001,
-  });
-
-  const smoothY = useTransform(smoothProgress, [0, 1], [-200, 200]);
-  const smoothOpacity = useTransform(
-    smoothProgress,
-    [0, 0.4, 0.5, 0.9, 1],
-    [1, 1, 0.5, 0, 0],
-  );
 
   const y = useTransform(scrollYProgress, [0, 1], [-100, 200]);
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.25], [1, 0.7, 0]);
@@ -569,22 +556,28 @@ function App() {
                     </svg>
                   </button>
                   <div className="relative flex min-h-[60vh] w-full flex-1 items-end justify-center overflow-hidden rounded-xl  p-8">
-                    {/* <div className="relative flex min-h-[60vh] w-full flex-1 items-end justify-center overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-md p-8"> */}
+                    <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                      {steps.map((step, index) => (
+                        <iframe
+                          key={step.title}
+                          className="absolute h-100 w-250 transition-opacity duration-500"
+                          style={{
+                            opacity: index === activeStep ? 1 : 0,
+                          }}
+                          loading="eager"
+                          src={step.animation}
+                        />
+                      ))}
+                    </div>
                     <AnimatePresence mode="wait">
                       <motion.div
                         key={activeStep}
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -30 }}
-                        transition={{ duration: 0.4 }}
+                        transition={{ duration: 0.5 }}
                         className="flex w-full flex-col items-center gap-1 text-center"
                       >
-                        <div className="flex items-center justify-center sm:py-4">
-                          <iframe
-                            className="h-100 w-250"
-                            src={steps[activeStep].animation}
-                          ></iframe>
-                        </div>
                         <span className="ghost-text">
                           {String(activeStep + 1).padStart(2, "0")} /{" "}
                           {String(steps.length).padStart(2, "0")}
@@ -657,89 +650,91 @@ function App() {
             </div>
           </div>
         </section>
-        <section id="contact" className="flex flex-col gap-10 px-10 py-20 sm:px-20">
-          <div className="flex flex-col items-center gap-4">
-            <Capsule className="" text="Let's Build Together" />
-            <h2 className="text-center text-2xl font-bold text-white sm:text-left">
-              Ready to Elevate Your Business?
-            </h2>
-            <p className="max-w-125 text-sm tracking-widest text-[#9CA3AF] sm:text-center">
-              Contact us today to discuss your project and discover how our
-              expertise can help you achieve your goals.
-            </p>
-          </div>
+      </section>
+      <section
+        id="contact"
+        className="flex flex-col gap-10 px-10 py-20 sm:px-20"
+      >
+        <div className="flex flex-col items-center gap-4">
+          <Capsule className="" text="Let's Build Together" />
+          <h2 className="text-center text-2xl font-bold text-white sm:text-left">
+            Ready to Elevate Your Business?
+          </h2>
+          <p className="max-w-125 text-sm tracking-widest text-[#9CA3AF] sm:text-center">
+            Contact us today to discuss your project and discover how our
+            expertise can help you achieve your goals.
+          </p>
+        </div>
 
-          <div className="mx-auto flex w-full max-w-4xl flex-col gap-10 rounded-2xl border border-white/10 bg-white/5 p-8 sm:flex-row sm:p-10">
-            <div className="flex flex-1 flex-col gap-6">
-              <div className="flex items-center gap-3">
-                <img
-                  src="/favicon.svg"
-                  alt="CloudEnd Solutions logo"
-                  className="h-10 w-10"
-                />
-                <span className="text-lg font-semibold text-white">
-                  CloudEnd Solutions
-                </span>
-              </div>
-              <ul className="flex flex-col gap-4 text-sm text-[#9CA3AF]">
-                <li className="flex items-start gap-3">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={1.5}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="h-5 w-5 shrink-0 text-theme"
-                  >
-                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                    <circle cx="12" cy="10" r="3" />
-                  </svg>
-                  123 Innovation Drive, Colombo 00500, Sri Lanka
-                </li>
-                <li className="flex items-center gap-3">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={1.5}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="h-5 w-5 shrink-0 text-theme"
-                  >
-                    <path d="M4 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L14 13l5 2v4a2 2 0 0 1-2 2C9.163 21 3 14.837 3 7a2 2 0 0 1 2-2Z" />
-                  </svg>
-                  +94 11 234 5678
-                </li>
-              </ul>
-            </div>
-
-            <form
-              onSubmit={handleContactSubmit}
-              className="flex flex-1 flex-col gap-4"
-            >
-              <label className="flex flex-col gap-2 text-sm text-white">
-                Email address
-                <input
-                  type="email"
-                  required
-                  value={contactEmail}
-                  onChange={(event) => setContactEmail(event.target.value)}
-                  placeholder="you@company.com"
-                  className="rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition-colors duration-300 placeholder:text-white/30 focus:border-theme/50"
-                />
-              </label>
-              <Button
-                text={contactSubmitted ? "Request Sent" : "Send Request"}
-                varient="default"
-                className="w-full"
+        <div className="mx-auto flex w-full max-w-4xl flex-col gap-10 rounded-2xl border border-white/10 bg-white/5 p-8 sm:flex-row sm:p-10">
+          <div className="flex flex-1 flex-col gap-6">
+            <div className="flex items-center gap-3">
+              <img
+                src="/favicon.svg"
+                alt="CloudEnd Solutions logo"
+                className="h-10 w-10"
               />
-              <p className="text-xs text-[#9CA3AF]">
-                We will get in touch with you as soon as possible.
-              </p>
-            </form>
+              <span className="text-lg font-semibold text-white">
+                CloudEnd Solutions
+              </span>
+            </div>
+            <ul className="flex flex-col gap-4 text-sm text-[#9CA3AF]">
+              <li className="flex items-start gap-3">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-5 w-5 shrink-0 text-theme"
+                >
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+                23/10 Sri Rewatha Mawatha, Galle 8000, Sri Lanka
+              </li>
+              <li className="flex items-center gap-3">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-5 w-5 shrink-0 text-theme"
+                >
+                  <path d="M4 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L14 13l5 2v4a2 2 0 0 1-2 2C9.163 21 3 14.837 3 7a2 2 0 0 1 2-2Z" />
+                </svg>
+                +94 71 378 9640
+              </li>
+            </ul>
           </div>
-        </section>
+
+          <form
+            onSubmit={handleContactSubmit}
+            className="flex flex-1 flex-col gap-4"
+          >
+            <label className="flex flex-col gap-2 text-sm text-white">
+              Email address
+              <input
+                type="email"
+                required
+                onChange={(event) => setContactEmail(event.target.value)}
+                placeholder="you@company.com"
+                className="rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition-colors duration-300 placeholder:text-white/30 focus:border-theme/50"
+              />
+            </label>
+            <Button
+              text={contactSubmitted ? "Request Sent" : "Send Request"}
+              varient="default"
+              className="w-full"
+            />
+            <p className="text-xs text-[#9CA3AF]">
+              We will get in touch with you as soon as possible.
+            </p>
+          </form>
+        </div>
       </section>
 
       <footer className="border-t border-white/10 px-10 py-10 sm:px-20">
@@ -791,8 +786,7 @@ function App() {
           </div>
         </div>
         <p className="mt-10 text-center text-xs text-white/30">
-          © {new Date().getFullYear()} CloudEnd Solutions. All rights
-          reserved.
+          © {new Date().getFullYear()} CloudEnd Solutions. All rights reserved.
         </p>
       </footer>
     </>
