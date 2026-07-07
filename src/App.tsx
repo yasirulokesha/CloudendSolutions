@@ -223,7 +223,7 @@ function App() {
   }, []);
 
   const y = useTransform(scrollYProgress, [0, 1], [-100, 200]);
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.25], [1, 0.7, 0]);
+  const opacity = useTransform(scrollYProgress, [0, 0.3, 0.35], [1, 1, 0]);
   const blur = useTransform(scrollYProgress, [0, 0.3, 0.35], [0, 0, 100]);
   const scale = useTransform(
     scrollYProgress,
@@ -266,12 +266,12 @@ function App() {
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="text-[#22D3EE]"
+                className="text-theme"
               >
                 Smart IT Solutions
               </motion.span>{" "}
             </h1>
-            <p className="md:text-center mt-4 text-[#9CA3AF]  max-w-[500px]">
+            <p className="md:text-center mt-4 text-[#9CA3AF]  max-w-125">
               Scale your infrastructure with cutting-edge LEDGER systems,
               high-performance E-Commerce engines, and specialized SEO
               architectures.{" "}
@@ -295,7 +295,7 @@ function App() {
         <motion.div
           id="services"
           style={{ top: 0, overflow: "hidden" }}
-          className="flex gap-5 bg-bg/50  flex-col container h-fit w-full"
+          className="flex gap-5 bg-bg/50  flex-col container h-fit w-full backdrop-blur-2xl"
         >
           <div className="mx-auto flex-col sm:flex-row flex w-full justify-between sm:items-end h-fit">
             <div>
@@ -312,7 +312,7 @@ function App() {
               </h2>
             </div>
             <div className="w-fit h-full flex flex-col justify-end items-end">
-              <p className="text-[#9CA3AF] max-w-[300px] sm:text-right w-fit">
+              <p className="text-[#9CA3AF] max-w-75 sm:text-right w-fit">
                 Tailored digital solutions designed to accelerate growth and
                 streamline operations.
               </p>
@@ -376,13 +376,13 @@ function App() {
             className=" h-fit pt-50 flex-col-reverse sm:flex-row md:items-center gap-10 sm:justify-between px-10 sm:px-20 flex justify-center max-h-screen max-w-full"
           >
             <AnimatePresence>
-              <motion.div className="flex flex-col w-full h-fit sm:gap-10 items-center gap-4 sm:justify-start justify-center max-w-[800px] max-h-150">
+              <motion.div className="flex flex-col w-full h-fit sm:gap-10 items-center gap-4 sm:justify-start justify-center max-w-200 max-h-150">
                 <motion.div className="flex flex-col gap-4 items-start w-full h-full">
                   <Capsule className="" text="Platform spotlight" />
                   <h2 className="text-2xl font-bold text-white">
                     E-Commerce Reimagined
                   </h2>
-                  <p className="text-[#9CA3AF] tracking-widest text-sm max-w-[500px]">
+                  <p className="text-[#9CA3AF] tracking-widest text-sm max-w-125">
                     From inventory management to secure checkout flows, our
                     E-Commerce solutions handle millions of transactions with
                     zero latency.
@@ -511,7 +511,7 @@ function App() {
         </section>
 
         <section className="flex flex-col gap-10 px-10 sm:px-20">
-          <div ref={stepsRef} style={{ height: `${steps.length * 100}vh` }}>
+          <div>
             <div className="sticky top-0 flex h-screen items-end pb-[10vh] justify-center">
               <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-8 ">
                 <motion.div
@@ -523,12 +523,12 @@ function App() {
                 >
                   <Capsule
                     className=""
-                    text="Your Ideas | Our Responsibility"
+                    text="Your Future | Our Responsibility"
                   />
                   <h2 className="text-center sm:text-left text-2xl font-bold text-white">
                     Start Your Digital Transformation Today
                   </h2>
-                  <p className="text-[#9CA3AF] tracking-widest text-sm max-w-[500px] sm:text-center">
+                  <p className="text-[#9CA3AF] tracking-widest text-sm max-w-125 sm:text-center">
                     From custom web development to enterprise-level software
                     integrations, we provide end-to-end solutions for businesses
                     of all sizes.
@@ -560,7 +560,7 @@ function App() {
                       {steps.map((step, index) => (
                         <iframe
                           key={step.title}
-                          className="absolute h-100 w-250 transition-opacity duration-500"
+                          className="absolute h-100 mx-auto mb-35 w-full transition-opacity duration-500"
                           style={{
                             opacity: index === activeStep ? 1 : 0,
                           }}
