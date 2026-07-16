@@ -6,7 +6,7 @@ import {
   useMotionValueEvent,
   AnimatePresence,
 } from "motion/react";
-import { Button, Capsule, ServiceCard, StarField } from "./Components";
+import { Button, Capsule, Header, ServiceCard, StarField } from "./Components";
 import { useEffect, useRef, useState } from "react";
 
 const services = [
@@ -129,6 +129,74 @@ const services = [
   },
 ];
 
+const heroBadges = [
+  {
+    label: "Enterprise Security",
+    icon: (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="h-4 w-4"
+      >
+        <path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5l-8-3Z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Fast Deployment",
+    icon: (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="h-4 w-4"
+      >
+        <path d="M13 2 3 14h7l-1 8 11-14h-7l1-6Z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Scalable Architecture",
+    icon: (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="h-4 w-4"
+      >
+        <path d="M3 20h18M6 20V10l6-4 6 4v10M10 20v-6h4v6" />
+      </svg>
+    ),
+  },
+  {
+    label: "24/7 Support",
+    icon: (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="h-4 w-4"
+      >
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 7v5l3 3" />
+      </svg>
+    ),
+  },
+];
+
 const subservices = [
   {
     title: "Unique",
@@ -235,6 +303,7 @@ function App() {
 
   return (
     <>
+      <Header phone="+94 71 378 9640" />
       <section ref={targetref} id="home">
         <div
           style={{ position: "sticky", top: 0, overflow: "hidden" }}
@@ -247,7 +316,7 @@ function App() {
             animate={{ opacity: 1, y: 0 }}
             viewport={{ amount: 0.2 }}
             style={{ y, opacity, scale, filter: `blur(${blur}px)` }}
-            className="flex flex-col md:items-center justify-center h-screen sticky"
+            className="flex flex-col md:items-center justify-center h-screen sticky pt-20"
             exit={{ opacity: 0 }}
           >
             <span
@@ -284,6 +353,41 @@ function App() {
                 varient="default"
               />
             </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-3 mt-10">
+              {heroBadges.map((badge) => (
+                <span
+                  key={badge.label}
+                  className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-[#9CA3AF] backdrop-blur-xl transition-all duration-300 hover:border-theme/50 hover:text-theme"
+                >
+                  <span className="text-theme">{badge.icon}</span>
+                  {badge.label}
+                </span>
+              ))}
+            </div>
+
+            <motion.a
+              href="#services"
+              aria-label="Scroll to explore"
+              className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[#9CA3AF] hover:text-theme transition-colors duration-300"
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <span className="text-[10px] uppercase tracking-widest">
+                Scroll
+              </span>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-5 w-5"
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </motion.a>
           </motion.div>
         </div>
         <motion.div

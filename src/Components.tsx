@@ -132,15 +132,12 @@ export const Header = ({ phone }: { phone: string }) => {
   return (
     <header className="fixed top-0 left-0 z-50 w-full border-b border-white/10 bg-bg/70 backdrop-blur-xl">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-4 sm:px-10">
-        <a href="#home" className="flex items-center gap-2 shrink-0">
+        <a href="#home" className="flex items-center shrink-0">
           <img
-            src="/favicon.svg"
-            alt="CloudEnd Solutions logo"
-            className="h-8 w-8"
+            src="/logo.png"
+            alt="CloudEnd Solutions"
+            className="h-7 w-auto sm:h-8"
           />
-          <span className="font-Gabarito text-lg font-semibold text-white">
-            CloudEnd Solutions
-          </span>
         </a>
 
         <nav className="hidden items-center gap-8 md:flex">
