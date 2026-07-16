@@ -1,5 +1,5 @@
-import { motion } from "motion/react";
-import { useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 
 type Star = {
   x: number;
@@ -118,6 +118,123 @@ export const StarField = ({
   );
 };
 
+const NAV_LINKS = [
+  { label: "Home", href: "#home" },
+  { label: "Services", href: "#services" },
+  { label: "Process", href: "#process" },
+  { label: "Contact", href: "#contact" },
+];
+
+export const Header = ({ phone }: { phone: string }) => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const whatsappNumber = phone.replace(/[^0-9]/g, "");
+
+  return (
+    <header className="fixed top-0 left-0 z-50 w-full border-b border-white/10 bg-bg/70 backdrop-blur-xl">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-4 sm:px-10">
+        <a href="#home" className="flex items-center gap-2 shrink-0">
+          <img
+            src="/favicon.svg"
+            alt="CloudEnd Solutions logo"
+            className="h-8 w-8"
+          />
+          <span className="font-Gabarito text-lg font-semibold text-white">
+            CloudEnd Solutions
+          </span>
+        </a>
+
+        <nav className="hidden items-center gap-8 md:flex">
+          {NAV_LINKS.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="text-sm text-[#9CA3AF] transition-colors duration-300 hover:text-theme"
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
+
+        <div className="flex items-center gap-3">
+          <a
+            href={`https://wa.me/${whatsappNumber}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Message us on WhatsApp"
+            title="Message us on WhatsApp"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-theme/10 text-theme transition-all duration-300 hover:bg-theme/20 hover:outline-2 outline-theme/50 outline-offset-0"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.5}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-5 w-5"
+            >
+              <path d="M4 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L14 13l5 2v4a2 2 0 0 1-2 2C9.163 21 3 14.837 3 7a2 2 0 0 1 2-2Z" />
+            </svg>
+          </a>
+
+          <button
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-label="Toggle navigation menu"
+            aria-expanded={menuOpen}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 text-white transition-colors duration-300 hover:border-theme/50 hover:text-theme md:hidden"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.5}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-5 w-5"
+            >
+              {menuOpen ? (
+                <>
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </>
+              ) : (
+                <>
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <line x1="3" y1="18" x2="21" y2="18" />
+                </>
+              )}
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.nav
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex flex-col gap-1 overflow-hidden border-t border-white/10 px-6 py-4 md:hidden"
+          >
+            {NAV_LINKS.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className="rounded-lg px-2 py-3 text-sm text-[#9CA3AF] transition-colors duration-300 hover:text-theme"
+              >
+                {link.label}
+              </a>
+            ))}
+          </motion.nav>
+        )}
+      </AnimatePresence>
+    </header>
+  );
+};
+
 export const Capsule = ({
   text,
   className,
@@ -128,7 +245,7 @@ export const Capsule = ({
   return (
     <div
       className={
-        "capsule uppercase text-sm font-light text-[#22D3EE]" + " " + className
+        "capsule uppercase text-sm font-light text-theme" + " " + className
       }
     >
       <div className="capsule-inner">{text}</div>

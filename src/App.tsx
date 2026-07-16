@@ -280,14 +280,8 @@ function App() {
               <Button
                 text="Get Started"
                 className="mt-8"
-                onClick={() => (window.location.href = "/contact")}
+                onClick={() => (window.location.href = "#contact")}
                 varient="default"
-              />
-              <Button
-                text="Get Started"
-                className="mt-8"
-                onClick={() => (window.location.href = "/contact")}
-                varient="flat"
               />
             </div>
           </motion.div>
