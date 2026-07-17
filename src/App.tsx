@@ -199,7 +199,7 @@ const heroBadges = [
 
 const subservices = [
   {
-    title: "Unique",
+    title: "Custom",
     subtitle: "Designs",
   },
   {
@@ -211,6 +211,10 @@ const subservices = [
     title: "24/7",
     subtitle: "Support",
   },
+  {
+    title: "Fast",
+    subtitle: "Delivery",
+  }
 ];
 
 const steps = [
@@ -452,7 +456,7 @@ function App() {
                   <div className="flex flex-col  justify-center items-center ">
                     <h1
                       className="text-xl uppercase text-theme font-Gabarito"
-                      style={{ fontWeight: 500, fontSize: "2.5rem" }}
+                      style={{ fontWeight: 700, fontSize: "2rem" }}
                     >
                       {subservice.title}
                     </h1>
