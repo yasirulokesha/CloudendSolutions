@@ -296,6 +296,9 @@ const STUDIO_OFFICE_IMAGE = worldmap;
 const FOOTER_RIDGE_IMAGE =
   "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2000&q=80";
 
+const ENQUIRY_ENDPOINT =
+  "http://localhost:3001/api/enquiry";
+
 export function App() {
   const [heroUrlInput, setHeroUrlInput] = useState("");
   const [heroAuditSubmitted, setHeroAuditSubmitted] = useState(false);
@@ -307,7 +310,9 @@ export function App() {
   const [activeStepIndex, setActiveStepIndex] = useState<number>(0);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const [contactEmail, setContactEmail] = useState("");
+  const [contactSending, setContactSending] = useState(false);
   const [contactSubmitted, setContactSubmitted] = useState(false);
+  const [contactError, setContactError] = useState<string | null>(null);
 
   const filteredServices =
     selectedCategory === "All"
@@ -327,13 +332,46 @@ export function App() {
 
   const handleHeroSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!heroUrlInput.trim()) return;
+    const trimmed = heroUrlInput.trim();
+    if (!trimmed) return;
     setHeroAuditSubmitted(true);
+    window.location.href = `https://seo-analyzer.cloudendsolutions.com/?url=${encodeURIComponent(trimmed)}`;
   };
 
-  const handleContactSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setContactSubmitted(true);
+    const trimmedEmail = contactEmail.trim();
+    if (!trimmedEmail || contactSending) return;
+
+    setContactSending(true);
+    setContactError(null);
+    setContactSubmitted(false);
+
+    try {
+      const res = await fetch(ENQUIRY_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: trimmedEmail,
+          topic: "Consultation / Project Request",
+          source: window.location.origin,
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to send enquiry.");
+      }
+
+      setContactSubmitted(true);
+      setContactEmail("");
+    } catch (err: unknown) {
+      setContactError(
+        err instanceof Error ? err.message : "Failed to submit contact form.",
+      );
+    } finally {
+      setContactSending(false);
+    }
   };
 
   return (
@@ -402,13 +440,6 @@ export function App() {
               </nav>
 
               <div className="flex items-center gap-2.5">
-                {/* <span
-                  title="Galle, Sri Lanka"
-                  className="hidden items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600 sm:inline-flex"
-                >
-                  <span>🇱🇰</span>
-                  <span>LK</span>
-                </span> */}
                 <a
                   href="#contact"
                   className="inline-flex items-center gap-1.5 rounded-full bg-[#111315] px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#272B30]"
@@ -468,9 +499,6 @@ export function App() {
                 <button
                   type="submit"
                   className="shrink-0 rounded-xl bg-[#16A8F8] px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-[#0D96E3] sm:text-sm"
-                  onClick={() => {
-                    window.location.href = `https://seo-analyzer.cloudendsolutions.com/?url=${encodeURIComponent(heroUrlInput)}`;
-                  }}
                 >
                   {heroAuditSubmitted ? "Analyzing ✓" : "Analyze →"}
                 </button>
@@ -1136,21 +1164,33 @@ export function App() {
                     onChange={(e) => {
                       setContactEmail(e.target.value);
                       if (contactSubmitted) setContactSubmitted(false);
+                      if (contactError) setContactError(null);
                     }}
                     placeholder="you@company.com"
                     className="w-full rounded-full border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs text-[#111315] outline-none placeholder:text-slate-400 focus:border-[#111315] focus:bg-white"
                   />
                   <button
                     type="submit"
-                    className="shrink-0 rounded-full bg-[#111315] px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#272B30]"
+                    disabled={contactSending}
+                    className="shrink-0 rounded-full bg-[#111315] px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#272B30] disabled:opacity-60"
                   >
-                    {contactSubmitted ? "Sent ✓" : "📞 Send"}
+                    {contactSending
+                      ? "Sending..."
+                      : contactSubmitted
+                        ? "Sent ✓"
+                        : "📞 Send"}
                   </button>
                 </div>
-                <p className="text-[11px] text-slate-500">
-                  {contactSubmitted
-                    ? `Thank you! We will get in touch at ${contactEmail}.`
-                    : "We will get in touch with you as soon as possible."}
+                <p
+                  className={`text-[11px] ${
+                    contactError ? "text-rose-600" : "text-slate-500"
+                  }`}
+                >
+                  {contactError
+                    ? contactError
+                    : contactSubmitted
+                      ? "Thank you! Your enquiry has been sent to CloudEnd Solutions."
+                      : "We will get in touch with you as soon as possible."}
                 </p>
               </form>
             </div>
