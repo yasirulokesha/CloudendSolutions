@@ -1,224 +1,233 @@
 import "./App.css";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useMotionValueEvent,
-  AnimatePresence,
-} from "motion/react";
-import { Button, Capsule, Header, ServiceCard, StarField } from "./Components";
-import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { useState } from "react";
+import worldmap from "../public/worldmap.png";
+
+type ShowcaseItem = {
+  id: string;
+  code: string;
+  kind: "Service" | "Product";
+  title: string;
+  tagline: string;
+  detail: string;
+  capabilities: string[];
+  href?: string;
+};
+
+const showcaseItems: ShowcaseItem[] = [
+  {
+    id: "websites",
+    code: "01",
+    kind: "Service",
+    title: "Business Websites",
+    tagline: "Brand & Conversion",
+    detail:
+      "Modern, responsive websites that establish your brand and convert visitors into customers with clean architecture and fast edge delivery.",
+    capabilities: [
+      "Custom Responsive Design",
+      "High-Speed Edge Hosting",
+      "Conversion-Focused UX",
+    ],
+  },
+  {
+    id: "ecommerce",
+    code: "02",
+    kind: "Service",
+    title: "E-Commerce",
+    tagline: "Scale & Checkout",
+    detail:
+      "High-performance online stores built to scale, from zero-latency checkout flows to real-time inventory and fulfillment.",
+    capabilities: [
+      "Headless Commerce",
+      "Real-Time Inventory Sync",
+      "Global CDN & Multi-Currency",
+    ],
+  },
+  {
+    id: "seo",
+    code: "03",
+    kind: "Service",
+    title: "SEO Support",
+    tagline: "Organic Growth",
+    detail:
+      "Data-driven technical and on-page search optimization to grow qualified organic traffic and improve search visibility.",
+    capabilities: [
+      "Technical SEO Audits",
+      "Core Web Vitals Tuning",
+      "Structured Search Indexing",
+    ],
+  },
+  {
+    id: "ledger",
+    code: "04",
+    kind: "Service",
+    title: "Ledger Management",
+    tagline: "Audit-Ready Finance",
+    detail:
+      "Reliable financial ledger systems that keep your balances, vouchers, and audit trails accurate and up to date.",
+    capabilities: [
+      "Live Cashbook Balances",
+      "Automated Voucher Records",
+      "Audit Trail Monitoring",
+    ],
+  },
+  {
+    id: "pos",
+    code: "05",
+    kind: "Service",
+    title: "POS Systems",
+    tagline: "Retail & Hospitality",
+    detail:
+      "Fast, dependable point-of-sale software engineered for high-volume retail counters and hospitality operations.",
+    capabilities: [
+      "Rapid Counter Billing",
+      "Live Stock Deductions",
+      "Shift & Daily Reporting",
+    ],
+  },
+  {
+    id: "sap",
+    code: "06",
+    kind: "Service",
+    title: "SAP Systems",
+    tagline: "Enterprise ERP",
+    detail:
+      "SAP implementation and integration that unifies finance, supply chain, and day-to-day enterprise operations.",
+    capabilities: [
+      "ERP System Integration",
+      "Finance & Supply Chain Sync",
+      "Operational Process Control",
+    ],
+  },
+  {
+    id: "schoolstock",
+    code: "P1",
+    kind: "Product",
+    title: "SchoolStock",
+    tagline: "schoolstock.lk · Stock & Inventory",
+    detail:
+      "Multi-tenant school inventory and stock management platform built for structured asset tracking, receiving records, and institutional workflows.",
+    capabilities: [
+      "Multi-Tenant Architecture",
+      "Receiving & Stock Ledgers",
+      "Cloud Access at schoolstock.lk",
+    ],
+    href: "https://schoolstock.lk",
+  },
+  {
+    id: "bursar",
+    code: "P2",
+    kind: "Product",
+    title: "BURSAR Ledger Manager",
+    tagline: "Desktop Accounting & Vouchers",
+    detail:
+      "Dedicated desktop accounting suite featuring real-time cashbook tracking, payment voucher generation, PDF viewing, and database trigger safeguards.",
+    capabilities: [
+      "Cashbook Balance Tracking",
+      "PDF Payment Vouchers",
+      "Database Trigger Safeguards",
+    ],
+  },
+];
 
 const services = [
   {
+    id: "websites",
     title: "Business Websites",
+    category: "Web & Growth",
+    badge: "Ready to Deploy",
     description:
       "Modern, responsive websites that establish your brand and convert visitors into customers.",
-    icon: (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={1.5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-6 w-6"
-      >
-        <rect x="2" y="4" width="20" height="14" rx="2" />
-        <line x1="8" y1="21" x2="16" y2="21" />
-        <line x1="12" y1="18" x2="12" y2="21" />
-      </svg>
-    ),
+    metrics: ["Responsive Layout", "Fast Edge Delivery", "SEO Foundations"],
+    accent: "from-sky-900/80 via-slate-900/85 to-black/95",
   },
   {
+    id: "ecommerce",
     title: "E-Commerce",
+    category: "Commerce & Ledger",
+    badge: "High Throughput",
     description:
       "High-performance online stores built to scale, from checkout to inventory to fulfillment.",
-    icon: (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={1.5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-6 w-6"
-      >
-        <circle cx="9" cy="21" r="1" />
-        <circle cx="19" cy="21" r="1" />
-        <path d="M2 2h2l2.6 12.4a2 2 0 0 0 2 1.6h8.8a2 2 0 0 0 2-1.6L21 6H6" />
-      </svg>
-    ),
+    metrics: ["Headless Commerce", "Global CDN", "Real-Time Stock Sync"],
+    accent: "from-emerald-950/85 via-zinc-900/90 to-black/95",
   },
   {
+    id: "seo",
     title: "SEO Support",
+    category: "Web & Growth",
+    badge: "Continuous Audit",
     description:
       "Data-driven search optimization to grow organic traffic and improve visibility.",
-    icon: (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={1.5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-6 w-6"
-      >
-        <circle cx="10" cy="10" r="6" />
-        <line x1="21" y1="21" x2="14.5" y2="14.5" />
-      </svg>
-    ),
+    metrics: ["Technical SEO", "Page Speed", "Search Indexing"],
+    accent: "from-cyan-950/85 via-slate-900/90 to-black/95",
   },
   {
+    id: "ledger",
     title: "Ledger Management",
+    category: "Commerce & Ledger",
+    badge: "Audit Ready",
     description:
       "Reliable ledger systems that keep your finances accurate, auditable, and up to date.",
-    icon: (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={1.5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-6 w-6"
-      >
-        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-      </svg>
-    ),
+    metrics: ["Multi-Currency Ledger", "Voucher Records", "Live Balances"],
+    accent: "from-stone-900/85 via-neutral-900/90 to-black/95",
   },
   {
+    id: "pos",
     title: "POS Systems",
+    category: "Enterprise POS & SAP",
+    badge: "Real-Time Sync",
     description:
       "Fast, dependable point-of-sale software built for retail and hospitality operations.",
-    icon: (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={1.5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-6 w-6"
-      >
-        <rect x="2" y="5" width="20" height="14" rx="2" />
-        <line x1="2" y1="10" x2="22" y2="10" />
-      </svg>
-    ),
+    metrics: ["Counter Billing", "Inventory Moves", "Shift Summaries"],
+    accent: "from-teal-950/85 via-zinc-900/90 to-black/95",
   },
   {
+    id: "sap",
     title: "SAP Systems",
+    category: "Enterprise POS & SAP",
+    badge: "Structured Scale",
     description:
       "SAP implementation and integration that unifies finance, supply chain, and operations.",
-    icon: (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={1.5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-6 w-6"
-      >
-        <path d="M12 2 2 7l10 5 10-5-10-5z" />
-        <path d="M2 12l10 5 10-5" />
-        <path d="M2 17l10 5 10-5" />
-      </svg>
-    ),
+    metrics: ["ERP Alignment", "Data Bridges", "Process Control"],
+    accent: "from-blue-950/85 via-slate-900/90 to-black/95",
   },
 ];
 
-const heroBadges = [
+const ecosystemTools = [
+  "OpenAI",
+  "AWS",
+  "SAP ERP",
+  "Next.js",
+  "Supabase",
+  "Cloudflare",
+];
+
+const comparisonRows = [
   {
-    label: "Enterprise Security",
-    icon: (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={1.5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-4 w-4"
-      >
-        <path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5l-8-3Z" />
-      </svg>
-    ),
+    legacy: "Generic templates & slow, bloated page loads",
+    cloudend: "Custom Designs engineered for speed and conversion",
   },
   {
-    label: "Fast Deployment",
-    icon: (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={1.5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-4 w-4"
-      >
-        <path d="M13 2 3 14h7l-1 8 11-14h-7l1-6Z" />
-      </svg>
-    ),
+    legacy: "Unclear technical scope before committing budget",
+    cloudend: "Free Consultation & system audit before we build",
   },
   {
-    label: "Scalable Architecture",
-    icon: (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={1.5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-4 w-4"
-      >
-        <path d="M3 20h18M6 20V10l6-4 6 4v10M10 20v-6h4v6" />
-      </svg>
-    ),
+    legacy: "Months of waiting with disconnected vendors",
+    cloudend: "Fast Delivery with milestone check-ins every week",
   },
   {
-    label: "24/7 Support",
-    icon: (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={1.5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-4 w-4"
-      >
-        <circle cx="12" cy="12" r="9" />
-        <path d="M12 7v5l3 3" />
-      </svg>
-    ),
+    legacy: "Fragmented ledgers, POS counters & online stock",
+    cloudend: "Unified E-Commerce, Ledger, POS & SAP integration",
+  },
+  {
+    legacy: "Disappearing support after launch day",
+    cloudend: "24/7 Support keeping critical systems always online",
   },
 ];
 
-const subservices = [
+const workflowSteps = [
   {
-    title: "Custom",
-    subtitle: "Designs",
-  },
-  {
-    title: "Free",
-    subtitle: "Consultation",
-  },
-
-  {
-    title: "24/7",
-    subtitle: "Support",
-  },
-  {
-    title: "Fast",
-    subtitle: "Delivery",
-  }
-];
-
-const steps = [
-  {
+    step: "01",
     title: "Consulting",
     description:
       "We learn your goals, audit your current systems, and map out the right approach.",
@@ -226,14 +235,15 @@ const steps = [
       "https://lottie.host/embed/7130b1e6-0f54-431c-bd24-8ccaaf1b23a3/p8JKnH7ByI.lottie",
   },
   {
+    step: "02",
     title: "Engineering",
     description:
       "We architect the solution, choosing the right stack and systems for your goals.",
     animation:
       "https://lottie.host/embed/46f4950d-54e0-4f62-88d8-ed06006c37ad/1HFYsT1CYR.lottie",
   },
-
   {
+    step: "03",
     title: "Building",
     description:
       "Our team designs and develops your solution, with regular check-ins along the way.",
@@ -241,6 +251,7 @@ const steps = [
       "https://lottie.host/embed/09a1a000-446f-48b3-9fbb-bd901a1115d3/1oVTCOQOy0.lottie",
   },
   {
+    step: "04",
     title: "Launching",
     description:
       "We deploy, test, and stay on hand to support you as your platform goes live.",
@@ -249,649 +260,972 @@ const steps = [
   },
 ];
 
-function App() {
-  const targetref = useRef<HTMLDivElement>(null);
-  const stepsRef = useRef<HTMLDivElement>(null);
+const faqs = [
+  {
+    question: "What IT ecosystems does CloudEnd Solutions build?",
+    answer:
+      "We deliver Business Websites, high-throughput E-Commerce platforms, technical SEO Support, auditable Ledger Management systems, retail/hospitality POS Systems, and enterprise SAP Systems.",
+  },
+  {
+    question: "How do we start a project?",
+    answer:
+      "We begin with a Free Consultation where we learn your goals, audit your existing tools, and map out a clear technical architecture before any development begins.",
+  },
+  {
+    question: "Can you integrate E-Commerce with our POS, Ledger, or SAP?",
+    answer:
+      "Yes. Our architecture unifies headless storefronts, real-time inventory sync, multi-currency ledger records, counter POS terminals, and SAP supply-chain workflows.",
+  },
+  {
+    question: "How fast can our platform go live?",
+    answer:
+      "Through our structured 4-step workflow—Consulting, Engineering, Building, and Launching—we prioritize fast delivery with regular progress check-ins.",
+  },
+  {
+    question: "What happens after launch?",
+    answer:
+      "We provide 24/7 Support, ongoing SEO optimization, and proactive system monitoring to ensure zero-latency reliability as your business scales.",
+  },
+];
 
-  const { scrollYProgress } = useScroll({
-    target: targetref,
-    offset: ["start end", "end start"],
-  });
+const HERO_MOUNTAIN_IMAGE =
+  "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=2000&q=85";
 
-  const { scrollYProgress: stepsProgress } = useScroll({
-    target: stepsRef,
-    offset: ["start start", "end end"],
-  });
+const STUDIO_OFFICE_IMAGE = worldmap;
 
-  const [activeStep, setActiveStep] = useState(0);
+const FOOTER_RIDGE_IMAGE =
+  "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2000&q=80";
+
+export function App() {
+  const [heroUrlInput, setHeroUrlInput] = useState("");
+  const [heroAuditSubmitted, setHeroAuditSubmitted] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [showcaseTab, setShowcaseTab] = useState<"All" | "Service" | "Product">(
+    "All",
+  );
+  const [activeShowcaseId, setActiveShowcaseId] = useState<string>("ecommerce");
+  const [activeStepIndex, setActiveStepIndex] = useState<number>(0);
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const [contactEmail, setContactEmail] = useState("");
   const [contactSubmitted, setContactSubmitted] = useState(false);
 
-  const handleContactSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    alert(`Thank you for reaching out! We'll contact you at ${contactEmail}.`);
+  const filteredServices =
+    selectedCategory === "All"
+      ? services
+      : services.filter((s) => s.category === selectedCategory);
+
+  const visibleShowcaseItems =
+    showcaseTab === "All"
+      ? showcaseItems
+      : showcaseItems.filter((item) => item.kind === showcaseTab);
+
+  const activeShowcaseItem =
+    showcaseItems.find((item) => item.id === activeShowcaseId) ??
+    showcaseItems[0];
+
+  const currentStep = workflowSteps[activeStepIndex];
+
+  const handleHeroSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!heroUrlInput.trim()) return;
+    setHeroAuditSubmitted(true);
+  };
+
+  const handleContactSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setContactSubmitted(true);
   };
 
-  useMotionValueEvent(stepsProgress, "change", (latest) => {
-    const index = Math.min(steps.length - 1, Math.floor(latest * steps.length));
-    setActiveStep(index);
-  });
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement;
-      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") return;
-
-      if (event.key === "ArrowRight" || event.key === "ArrowDown") {
-        setActiveStep((current) => Math.min(steps.length - 1, current + 1));
-      } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
-        setActiveStep((current) => Math.max(0, current - 1));
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
-
-  const y = useTransform(scrollYProgress, [0, 1], [-100, 200]);
-  const opacity = useTransform(scrollYProgress, [0, 0.3, 0.35], [1, 1, 0]);
-  const blur = useTransform(scrollYProgress, [0, 0.3, 0.35], [0, 0, 100]);
-  const scale = useTransform(
-    scrollYProgress,
-    [0, 0.3, 0.5, 0.8],
-    [1, 1, 0.8, 0],
-  );
-
-  // const y = useTransform(scrollYProgress, [0, 1], [-100, 100]);
-
   return (
-    <>
-      <Header phone="+94 71 378 9640" />
-      <section ref={targetref} id="home">
-        <div
-          style={{ position: "sticky", top: 0, overflow: "hidden" }}
-          className="px-10"
-        >
-          <StarField />
+    <div className="min-h-screen bg-white text-[#111315] antialiased selection:bg-[#16A8F8]/20 selection:text-[#0B0D0F]">
+      {/* Top Hero Wrapper with Rounded Alpine Landscape Container */}
+      <div
+        id="home"
+        className="mx-auto max-w-[1360px] px-3 pt-3 sm:px-5 sm:pt-5"
+      >
+        <div className="relative overflow-hidden rounded-[28px] bg-[#6FA6D6] shadow-[0_24px_60px_-20px_rgba(15,23,42,0.22)]">
+          <img
+            src={HERO_MOUNTAIN_IMAGE}
+            alt="Sunlit alpine landscape"
+            className="absolute inset-0 h-full w-full object-cover object-center"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-b from-[#4B89C8]/65 via-[#4E8BC7]/35 to-black/50"
+          />
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            viewport={{ amount: 0.2 }}
-            style={{ y, opacity, scale, filter: `blur(${blur}px)` }}
-            className="flex flex-col md:items-center justify-center h-screen sticky pt-20"
-            exit={{ opacity: 0 }}
-          >
-            <span
-              className=" w-300 h-300 max-w-full -z-100 rounded-full absolute left-1/2 -translate-x-1/2 -top-20"
-              style={{
-                background:
-                  "radial-gradient(50% 50% at 50% 50%, rgba(34, 211, 238, 0.20) 0%, rgba(168, 85, 247, 0.02) 60%, rgba(9, 9, 11, 0) 100%)",
-              }}
-            />
-            <Capsule className="mb-8" text="Engineering The Future" />
+          {/* Floating White Pill Navigation Bar */}
+          <header className="relative z-20 mx-auto max-w-5xl px-4 pt-5 sm:px-6">
+            <div className="flex items-center justify-between rounded-2xl bg-white/95 px-4 py-2.5 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.18)] backdrop-blur-md sm:px-5">
+              <a href="#home" className="flex items-center gap-2.5">
+                <img
+                  src="/favicon.svg"
+                  alt="CloudEnd Solutions logo"
+                  className="h-6 w-6"
+                />
+                <span className="text-sm font-bold tracking-tight text-[#111315]">
+                  Cloudend
+                </span>
+              </a>
 
-            <h1>Powering Your Business</h1>
-            <h1>
-              with{" "}
-              <motion.span
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="text-theme"
-              >
-                Smart IT Solutions
-              </motion.span>{" "}
-            </h1>
-            <p className="md:text-center mt-4 text-[#9CA3AF]  max-w-125">
+              <nav className="hidden items-center gap-7 text-xs font-medium text-[#4B5563] md:flex">
+                <a
+                  href="#about"
+                  className="transition-colors hover:text-[#111315]"
+                >
+                  About
+                </a>
+                <a
+                  href="#why-us"
+                  className="transition-colors hover:text-[#111315]"
+                >
+                  Solution
+                </a>
+                <a
+                  href="#services"
+                  className="transition-colors hover:text-[#111315]"
+                >
+                  Works
+                </a>
+                <a
+                  href="#process"
+                  className="transition-colors hover:text-[#111315]"
+                >
+                  Process
+                </a>
+                <a
+                  href="#faq"
+                  className="transition-colors hover:text-[#111315]"
+                >
+                  FAQ
+                </a>
+              </nav>
+
+              <div className="flex items-center gap-2.5">
+                {/* <span
+                  title="Galle, Sri Lanka"
+                  className="hidden items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600 sm:inline-flex"
+                >
+                  <span>🇱🇰</span>
+                  <span>LK</span>
+                </span> */}
+                <a
+                  href="#contact"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-[#111315] px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#272B30]"
+                >
+                  <span className="text-[11px]">📞</span>
+                  <span>Book a call</span>
+                </a>
+              </div>
+            </div>
+          </header>
+
+          {/* Centered Hero Content */}
+          <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center px-6 pt-16 pb-14 text-center sm:pt-24 sm:pb-20">
+            <motion.h1
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-4xl leading-[1.08] font-semibold tracking-tight text-white drop-shadow-[0_2px_18px_rgba(0,0,0,0.22)] sm:text-5xl lg:text-[62px]"
+            >
+              Engineering the future.
+              <br />
+              Smart IT that scales.
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.08 }}
+              className="mt-4 max-w-xl text-sm leading-relaxed text-white/95 drop-shadow-[0_1px_8px_rgba(0,0,0,0.25)] sm:text-base"
+            >
               Scale your infrastructure with cutting-edge LEDGER systems,
               high-performance E-Commerce engines, and specialized SEO
-              architectures.{" "}
-            </p>
-            <div className="flex gap-4">
-              <Button
-                text="Get Started"
-                className="mt-8"
-                onClick={() => (window.location.href = "#contact")}
-                varient="default"
+              architectures.
+            </motion.p>
+
+            {/* White Frosted Inline Analysis Box */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.14 }}
+              className="mt-8 w-full max-w-md rounded-2xl bg-white/95 p-3 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.3)] backdrop-blur-md"
+            >
+              <form
+                onSubmit={handleHeroSubmit}
+                className="flex items-center gap-2"
+              >
+                <input
+                  type="text"
+                  value={heroUrlInput}
+                  onChange={(e) => {
+                    setHeroUrlInput(e.target.value);
+                    if (heroAuditSubmitted) setHeroAuditSubmitted(false);
+                  }}
+                  placeholder="https://yourcompany.com"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-2.5 text-xs text-[#111315] outline-none placeholder:text-slate-400 focus:border-[#16A8F8] focus:bg-white sm:text-sm"
+                />
+                <button
+                  type="submit"
+                  className="shrink-0 rounded-xl bg-[#16A8F8] px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-[#0D96E3] sm:text-sm"
+                  onClick={() => {
+                    window.location.href = `https://seo-analyzer.cloudendsolutions.com/?url=${encodeURIComponent(heroUrlInput)}`;
+                  }}
+                >
+                  {heroAuditSubmitted ? "Analyzing ✓" : "Analyze →"}
+                </button>
+              </form>
+              <p className="mt-2 text-[11px] text-slate-500">
+                {heroAuditSubmitted
+                  ? `Free architecture & SEO audit queued for ${heroUrlInput}.`
+                  : "Submit your company website for a free IT & SEO architecture audit"}
+              </p>
+            </motion.div>
+
+            {/* Bottom Dark Frosted Pillar Pill */}
+            <div className="mt-14 inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-full bg-black/55 px-5 py-2 text-[11px] font-medium text-white/95 backdrop-blur-md">
+              <span>Enterprise Security</span>
+              <span className="text-white/40">•</span>
+              <span>Fast Deployment</span>
+              <span className="text-white/40">•</span>
+              <span>Scalable Architecture</span>
+              <span className="text-white/40">•</span>
+              <span>24/7 Support</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Ecosystem Integration Logos Strip */}
+      <section className="mx-auto max-w-5xl px-6 pt-12 pb-8 text-center">
+        <p className="text-xs font-medium text-slate-400">
+          We help our clients stay ahead by engineering ecosystems powered by
+        </p>
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 sm:gap-x-14">
+          {ecosystemTools.map((tool) => (
+            <span
+              key={tool}
+              className="text-base font-bold tracking-tight text-slate-800/85 transition-colors hover:text-[#111315] sm:text-lg"
+            >
+              {tool}
+            </span>
+          ))}
+        </div>
+      </section>
+
+      {/* Redesigned Services & Products Section: Interactive Directory + Dark Spotlight Panel */}
+      <section id="about" className="mx-auto max-w-6xl px-6 py-20 sm:py-24">
+        {/* Top Section Header & Filter Tabs */}
+        <div className="flex flex-col justify-between gap-6 border-b border-slate-200/80 pb-8 md:flex-row md:items-end">
+          <div className="max-w-xl">
+            <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] font-semibold tracking-wider text-slate-600 uppercase">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#16A8F8]" />
+              Services &amp; Products
+            </span>
+            <h2 className="mt-3 text-3xl leading-tight font-semibold tracking-tight text-[#111315] sm:text-4xl">
+              Smart IT has changed how businesses scale.
+            </h2>
+          </div>
+
+          <div className="inline-flex self-start rounded-full border border-slate-200 bg-slate-100/80 p-1 md:self-auto">
+            {(["All", "Service", "Product"] as const).map((tab) => {
+              const active = showcaseTab === tab;
+              return (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => {
+                    setShowcaseTab(tab);
+                    const nextMatch =
+                      tab === "All"
+                        ? showcaseItems[0]
+                        : showcaseItems.find((i) => i.kind === tab);
+                    if (nextMatch) setActiveShowcaseId(nextMatch.id);
+                  }}
+                  className={`relative rounded-full px-4 py-1.5 text-xs font-semibold transition-colors ${
+                    active
+                      ? "text-white"
+                      : "text-slate-600 hover:text-[#111315]"
+                  }`}
+                >
+                  {active && (
+                    <motion.span
+                      layoutId="showcaseFilterPill"
+                      transition={{
+                        type: "spring",
+                        stiffness: 380,
+                        damping: 32,
+                      }}
+                      className="absolute inset-0 rounded-full bg-[#111315]"
+                    />
+                  )}
+                  <span className="relative z-10">
+                    {tab === "All" ? "All (8)" : `${tab}s`}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Main Split Layout: Interactive 2-Column Grid + Dark Obsidian Spotlight */}
+        <div className="mt-8 grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
+          {/* Left 7 Columns: Interactive Selector Tiles */}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:col-span-7">
+            {visibleShowcaseItems.map((item) => {
+              const isSelected = item.id === activeShowcaseId;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setActiveShowcaseId(item.id)}
+                  className={`group relative flex flex-col justify-between rounded-2xl border p-4 text-left transition-all ${
+                    isSelected
+                      ? "border-[#111315] bg-slate-900/[0.03] shadow-xs"
+                      : "border-slate-200/90 bg-white hover:border-slate-300 hover:bg-slate-50/60"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-mono text-[11px] font-semibold text-slate-400">
+                      {item.code}
+                    </span>
+                    <span
+                      className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${
+                        item.kind === "Product"
+                          ? "bg-[#16A8F8]/15 text-[#0D96E3]"
+                          : "bg-slate-100 text-slate-600"
+                      }`}
+                    >
+                      {item.kind}
+                    </span>
+                  </div>
+
+                  <div className="mt-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="text-sm font-semibold text-[#111315]">
+                        {item.title}
+                      </h3>
+                      <span
+                        className={`text-xs transition-transform ${
+                          isSelected
+                            ? "translate-x-0.5 text-[#16A8F8]"
+                            : "text-slate-300 group-hover:text-slate-600"
+                        }`}
+                      >
+                        →
+                      </span>
+                    </div>
+                    <p className="mt-0.5 text-xs text-slate-500">
+                      {item.tagline}
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Right 5 Columns: Dark High-Contrast Detail Panel */}
+          <div className="lg:sticky lg:top-24 lg:col-span-5">
+            <div className="overflow-hidden rounded-3xl bg-[#0B0D10] p-7 text-white shadow-[0_24px_60px_-20px_rgba(15,23,42,0.35)] sm:p-8">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeShowcaseItem.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.22 }}
+                  className="space-y-6"
+                >
+                  <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                    <span
+                      className={`rounded-full px-3 py-1 text-[11px] font-semibold ${
+                        activeShowcaseItem.kind === "Product"
+                          ? "bg-[#16A8F8] text-white"
+                          : "bg-white/10 text-sky-300"
+                      }`}
+                    >
+                      {activeShowcaseItem.kind}
+                    </span>
+                    <span className="font-mono text-xs text-white/45">
+                      {activeShowcaseItem.tagline}
+                    </span>
+                  </div>
+
+                  <div className="space-y-2.5">
+                    <h3 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+                      {activeShowcaseItem.title}
+                    </h3>
+                    <p className="text-sm leading-relaxed text-white/75">
+                      {activeShowcaseItem.detail}
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <p className="text-[11px] font-semibold tracking-wider text-white/40 uppercase">
+                      Key Capabilities
+                    </p>
+                    <ul className="space-y-2">
+                      {activeShowcaseItem.capabilities.map((cap) => (
+                        <li
+                          key={cap}
+                          className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2 text-xs font-medium text-white/90"
+                        >
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#16A8F8]" />
+                          <span>{cap}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="pt-2">
+                    {activeShowcaseItem.href ? (
+                      <a
+                        href={activeShowcaseItem.href}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#16A8F8] px-5 py-3 text-xs font-semibold text-white transition-colors hover:bg-[#0D96E3]"
+                      >
+                        <span>Launch {activeShowcaseItem.title}</span>
+                        <span aria-hidden="true">↗</span>
+                      </a>
+                    ) : (
+                      <a
+                        href="#contact"
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-xs font-semibold text-[#111315] transition-colors hover:bg-slate-100"
+                      >
+                        <span>Consult on {activeShowcaseItem.title}</span>
+                        <span aria-hidden="true">→</span>
+                      </a>
+                    )}
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Bento Social Proof, Platform Spotlight & Galle Office Card */}
+      <section className="mx-auto max-w-5xl px-6 pb-24">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-12">
+          <div className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-6 shadow-[0_2px_14px_rgba(15,23,42,0.03)] md:col-span-7">
+            <div className="overflow-hidden rounded-xl border border-slate-100 bg-slate-950">
+              <img
+                src="/wallet.png"
+                alt="E-Commerce Reimagined platform dashboard"
+                className="h-44 w-full object-cover"
               />
             </div>
+            <div className="mt-5 flex items-end justify-between gap-4">
+              <div>
+                <p className="text-[10px] font-semibold tracking-wider text-slate-400 uppercase">
+                  Platform Spotlight
+                </p>
+                <h3 className="mt-1 text-lg font-semibold text-[#111315]">
+                  E-Commerce Reimagined — Zero-Latency Checkout &amp; Ledger
+                  Sync
+                </h3>
+              </div>
+              <a
+                href="#services"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-200 text-xs font-semibold text-[#111315] transition-colors hover:bg-[#111315] hover:text-white"
+              >
+                ↗
+              </a>
+            </div>
+          </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-3 mt-10">
-              {heroBadges.map((badge) => (
+          <div className="flex flex-col justify-between gap-4 md:col-span-5">
+            <div className="grid flex-1 grid-cols-2 gap-3 rounded-2xl border border-slate-200/90 bg-slate-50/70 p-5">
+              <div className="rounded-xl bg-white p-3.5 shadow-2xs">
+                <p className="text-lg font-bold text-[#111315]">Custom</p>
+                <p className="text-xs text-slate-500">Designs</p>
+              </div>
+              <div className="rounded-xl bg-white p-3.5 shadow-2xs">
+                <p className="text-lg font-bold text-[#111315]">Free</p>
+                <p className="text-xs text-slate-500">Consultation</p>
+              </div>
+              <div className="rounded-xl bg-white p-3.5 shadow-2xs">
+                <p className="text-lg font-bold text-[#111315]">24/7</p>
+                <p className="text-xs text-slate-500">Support</p>
+              </div>
+              <div className="rounded-xl bg-white p-3.5 shadow-2xs">
+                <p className="text-lg font-bold text-[#111315]">Fast</p>
+                <p className="text-xs text-slate-500">Delivery</p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between rounded-2xl bg-[#111315] px-5 py-3.5 text-xs text-white">
+              <span className="font-medium text-white/90">
+                Trusted by growing businesses
+              </span>
+              <span className="font-semibold text-amber-400">
+                4.9 <span className="tracking-tight">★★★★★</span>
+              </span>
+            </div>
+          </div>
+
+          <div className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-6 shadow-[0_2px_14px_rgba(15,23,42,0.03)] md:col-span-6">
+            <blockquote className="text-xl leading-snug font-medium tracking-tight text-[#111315]">
+              &ldquo;From inventory management to secure checkout flows, our
+              E-Commerce solutions handle millions of transactions with zero
+              latency.&rdquo;
+            </blockquote>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {[
+                "Headless Commerce",
+                "Global CDN",
+                "Multi-Currency Ledger",
+                "Real-Time Inventory Sync",
+              ].map((tag) => (
                 <span
-                  key={badge.label}
-                  className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-[#9CA3AF] backdrop-blur-xl transition-all duration-300 hover:border-theme/50 hover:text-theme"
+                  key={tag}
+                  className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-medium text-slate-700"
                 >
-                  <span className="text-theme">{badge.icon}</span>
-                  {badge.label}
+                  {tag}
                 </span>
               ))}
             </div>
-
-            <motion.a
-              href="#services"
-              aria-label="Scroll to explore"
-              className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[#9CA3AF] hover:text-theme transition-colors duration-300"
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <span className="text-[10px] uppercase tracking-widest">
-                Scroll
-              </span>
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.5}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-5 w-5"
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </motion.a>
-          </motion.div>
-        </div>
-        <motion.div
-          id="services"
-          style={{ top: 0, overflow: "hidden" }}
-          className="flex gap-5 bg-bg/50  flex-col container h-fit w-full backdrop-blur-2xl"
-        >
-          <div className="mx-auto flex-col sm:flex-row flex w-full justify-between sm:items-end h-fit">
-            <div>
-              <span className="ghost-text">OUR EXPERTISE</span>
-              <h2>
-                <motion.span
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                  exit={{ opacity: 0, y: -100 }}
-                >
-                  Comprehensive IT <br /> Ecosystems
-                </motion.span>{" "}
-              </h2>
-            </div>
-            <div className="w-fit h-full flex flex-col justify-end items-end">
-              <p className="text-[#9CA3AF] max-w-75 sm:text-right w-fit">
-                Tailored digital solutions designed to accelerate growth and
-                streamline operations.
-              </p>
-            </div>
           </div>
-          <AnimatePresence>
-            <motion.div className="flex flex-wrap w-full items-center gap-6 sm:justify-between justify-center">
-              {services.map((service) => (
-                <motion.div
-                  key={service.title}
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ amount: 0.5 }}
-                  transition={{ duration: 0.4 }}
-                  exit={{ opacity: 0, y: 50 }}
-                >
-                  <ServiceCard
-                    key={service.title}
-                    icon={service.icon}
-                    title={service.title}
-                    description={service.description}
-                  />
-                </motion.div>
-              ))}
-            </motion.div>
 
-            <motion.div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-              }}
-              className="gap-20 sm:gap-0 mt-20 backdrop-blur-xl rounded-2xl border border-white/10 bg-white/5 py-20 sm:py-6 p-6 transition-all duration-300 hover:border-theme/50 hover:bg-theme/5"
-            >
-              {subservices.map((subservice) => (
-                <div
-                  key={subservice.title}
-                  className="sm:border-r last:border-none"
-                >
-                  <div className="flex flex-col  justify-center items-center ">
-                    <h1
-                      className="text-xl uppercase text-theme font-Gabarito"
-                      style={{ fontWeight: 700, fontSize: "2rem" }}
-                    >
-                      {subservice.title}
-                    </h1>
-                    <span className="text-sm -mt-1 font-light uppercase text-white/50">
-                      {subservice.subtitle}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </motion.div>
-          </AnimatePresence>
-        </motion.div>
-        <section className=" h-fit pb-60 w-full overflow-hidden sticky">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ amount: 0.5 }}
-            transition={{ duration: 0.5 }}
-            className=" h-fit pt-50 flex-col-reverse sm:flex-row md:items-center gap-10 sm:justify-between px-10 sm:px-20 flex justify-center max-h-screen max-w-full"
-          >
-            <AnimatePresence>
-              <motion.div className="flex flex-col w-full h-fit sm:gap-10 items-center gap-4 sm:justify-start justify-center max-w-200 max-h-150">
-                <motion.div className="flex flex-col gap-4 items-start w-full h-full">
-                  <Capsule className="" text="Platform spotlight" />
-                  <h2 className="text-2xl font-bold text-white">
-                    E-Commerce Reimagined
-                  </h2>
-                  <p className="text-[#9CA3AF] tracking-widest text-sm max-w-125">
-                    From inventory management to secure checkout flows, our
-                    E-Commerce solutions handle millions of transactions with
-                    zero latency.
-                  </p>
-                  <ul className="text-sm mt-5">
-                    <li className="flex items-center gap-2 my-2">
-                      <span className="text-theme">
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 20 20"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M18.1669 8.33351C18.5474 10.2013 18.2762 12.143 17.3984 13.835C16.5206 15.527 15.0893 16.8669 13.3431 17.6313C11.597 18.3957 9.64154 18.5383 7.80293 18.0355C5.96433 17.5326 4.35368 16.4147 3.23958 14.868C2.12548 13.3214 1.57529 11.4395 1.68074 9.53633C1.78619 7.63312 2.54092 5.82358 3.81906 4.40948C5.0972 2.99538 6.8215 2.0622 8.7044 1.76555C10.5873 1.4689 12.515 1.82672 14.166 2.77934M7.49967 9.16644L9.99967 11.6664L18.333 3.33311"
-                            stroke="#22D3EE"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                          />
-                        </svg>
-                      </span>
-                      Headless Commerce Architecture
-                    </li>
-                    <li className="flex items-center gap-2 my-2">
-                      <span className="text-theme">
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 20 20"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M18.1669 8.33351C18.5474 10.2013 18.2762 12.143 17.3984 13.835C16.5206 15.527 15.0893 16.8669 13.3431 17.6313C11.597 18.3957 9.64154 18.5383 7.80293 18.0355C5.96433 17.5326 4.35368 16.4147 3.23958 14.868C2.12548 13.3214 1.57529 11.4395 1.68074 9.53633C1.78619 7.63312 2.54092 5.82358 3.81906 4.40948C5.0972 2.99538 6.8215 2.0622 8.7044 1.76555C10.5873 1.4689 12.515 1.82672 14.166 2.77934M7.49967 9.16644L9.99967 11.6664L18.333 3.33311"
-                            stroke="#22D3EE"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                          />
-                        </svg>
-                      </span>
-                      Global CDN Distribution
-                    </li>
-                    <li className="flex items-center gap-2 my-2">
-                      <span className="text-theme">
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 20 20"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M18.1669 8.33351C18.5474 10.2013 18.2762 12.143 17.3984 13.835C16.5206 15.527 15.0893 16.8669 13.3431 17.6313C11.597 18.3957 9.64154 18.5383 7.80293 18.0355C5.96433 17.5326 4.35368 16.4147 3.23958 14.868C2.12548 13.3214 1.57529 11.4395 1.68074 9.53633C1.78619 7.63312 2.54092 5.82358 3.81906 4.40948C5.0972 2.99538 6.8215 2.0622 8.7044 1.76555C10.5873 1.4689 12.515 1.82672 14.166 2.77934M7.49967 9.16644L9.99967 11.6664L18.333 3.33311"
-                            stroke="#22D3EE"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                          />
-                        </svg>
-                      </span>
-                      Secure Multi-currency Ledger
-                    </li>
-                    <li className="flex items-center gap-2 my-2">
-                      <span className="text-theme">
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 20 20"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M18.1669 8.33351C18.5474 10.2013 18.2762 12.143 17.3984 13.835C16.5206 15.527 15.0893 16.8669 13.3431 17.6313C11.597 18.3957 9.64154 18.5383 7.80293 18.0355C5.96433 17.5326 4.35368 16.4147 3.23958 14.868C2.12548 13.3214 1.57529 11.4395 1.68074 9.53633C1.78619 7.63312 2.54092 5.82358 3.81906 4.40948C5.0972 2.99538 6.8215 2.0622 8.7044 1.76555C10.5873 1.4689 12.515 1.82672 14.166 2.77934M7.49967 9.16644L9.99967 11.6664L18.333 3.33311"
-                            stroke="#22D3EE"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                          />
-                        </svg>
-                      </span>
-                      Real-time Inventory Sync
-                    </li>
-                  </ul>
-                  <Button
-                    className="mt-5"
-                    text="Start Your Journey"
-                    varient="default"
-                  />
-                </motion.div>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ amount: 0.3 }}
-                transition={{ duration: 0.5 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="relative w-full h-fit drop-shadow-[0px_0px_150px] drop-shadow-theme/50 rounded-2xl overflow-hidden flex justify-center items-center p-0.5"
-                style={{ maxWidth: "800px" }}
-              >
-                <motion.div
-                  className="pointer-events-none absolute inset-[-300%]"
-                  style={{
-                    background:
-                      "conic-gradient(from 0deg, transparent 0deg, transparent 260deg, #22D3EE 300deg, #A855F7 330deg, transparent 360deg)",
-                  }}
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                />
-                <div className="relative w-full h-full rounded-2xl overflow-hidden bg-bg flex justify-center items-center">
-                  <span>
-                    <motion.img
-                      src="/wallet.png"
-                      alt="System Integrations"
-                      className="w-full h-full "
-                      initial={{ opacity: 0, scale: 0.98 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      whileHover={{ scale: 1.0003 }}
-                      viewport={{ amount: 0.3 }}
-                      transition={{ duration: 0.5 }}
-                      exit={{ opacity: 0, scale: -1.2 }}
-                    />
-                  </span>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </motion.div>
-        </section>
-
-        <section className="flex flex-col gap-10 px-10 sm:px-20">
-          <div>
-            <div className="sticky top-0 flex h-screen items-end pb-[10vh] justify-center">
-              <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-8 ">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="flex flex-col h-fit gap-4 items-center "
-                  style={{ top: "5vh", overflow: "hidden" }}
-                >
-                  <Capsule
-                    className=""
-                    text="Your Future | Our Responsibility"
-                  />
-                  <h2 className="text-center sm:text-left text-2xl font-bold text-white">
-                    Start Your Digital Transformation Today
-                  </h2>
-                  <p className="text-[#9CA3AF] tracking-widest text-sm max-w-125 sm:text-center">
-                    From custom web development to enterprise-level software
-                    integrations, we provide end-to-end solutions for businesses
-                    of all sizes.
-                  </p>
-                </motion.div>
-                <div className="flex w-full items-center justify-center gap-6">
-                  <button
-                    onClick={() =>
-                      setActiveStep((current) => Math.max(0, current - 1))
-                    }
-                    disabled={activeStep === 0}
-                    aria-label="Previous step"
-                    className="md:flex hidden h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition-colors duration-300 hover:border-theme/50 hover:text-theme disabled:opacity-30 disabled:hover:border-white/10 disabled:hover:text-white"
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="h-5 w-5"
-                    >
-                      <path d="m15 18-6-6 6-6" />
-                    </svg>
-                  </button>
-                  <div className="relative flex min-h-[60vh] w-full flex-1 items-end justify-center overflow-hidden rounded-xl  p-8">
-                    <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                      {steps.map((step, index) => (
-                        <iframe
-                          key={step.title}
-                          className="absolute h-100 mx-auto mb-35 w-full transition-opacity duration-500"
-                          style={{
-                            opacity: index === activeStep ? 1 : 0,
-                          }}
-                          loading="eager"
-                          src={step.animation}
-                        />
-                      ))}
-                    </div>
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={activeStep}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -30 }}
-                        transition={{ duration: 0.5 }}
-                        className="flex w-full flex-col items-center gap-1 text-center"
-                      >
-                        <span className="ghost-text">
-                          {String(activeStep + 1).padStart(2, "0")} /{" "}
-                          {String(steps.length).padStart(2, "0")}
-                        </span>
-                        <h3 className="text-3xl font-semibold text-white">
-                          {steps[activeStep].title}
-                        </h3>
-                        <p className="max-w-md text-sm text-[#9CA3AF]">
-                          {steps[activeStep].description}
-                        </p>
-                      </motion.div>
-                    </AnimatePresence>
-                  </div>
-
-                  <button
-                    onClick={() =>
-                      setActiveStep((current) =>
-                        Math.min(steps.length - 1, current + 1),
-                      )
-                    }
-                    disabled={activeStep === steps.length - 1}
-                    aria-label="Next step"
-                    className="md:flex hidden h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition-colors duration-300 hover:border-theme/50 hover:text-theme disabled:opacity-30 disabled:hover:border-white/10 disabled:hover:text-white"
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="h-5 w-5"
-                    >
-                      <path d="m9 18 6-6-6-6" />
-                    </svg>
-                  </button>
-                </div>
-
-                <div className="relative h-3 w-full max-w-md">
-                  <div className="absolute left-0 right-0 top-1/2 h-1 -translate-y-1/2 rounded-full bg-white/10" />
-                  <motion.div
-                    className="absolute left-0 top-1/2 h-1 -translate-y-1/2 origin-left rounded-full bg-theme"
-                    animate={{
-                      width: `${(activeStep / (steps.length - 1)) * 100}%`,
-                    }}
-                    transition={{ duration: 0.4, ease: "easeOut" }}
-                  />
-                  {steps.map((step, index) => (
-                    <button
-                      key={step.title}
-                      onClick={() => setActiveStep(index)}
-                      aria-label={`Go to ${step.title}`}
-                      className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
-                      style={{
-                        left: `${(index / (steps.length - 1)) * 100}%`,
-                      }}
-                    >
-                      <span
-                        className={
-                          "block h-3 w-3 rounded-full border-2 transition-colors duration-300 " +
-                          (index <= activeStep
-                            ? "border-theme bg-theme"
-                            : "border-white/20 bg-bg")
-                        }
-                      />
-                    </button>
-                  ))}
-                </div>
+          <div className="relative min-h-[240px] overflow-hidden rounded-2xl border border-slate-200/90 md:col-span-6">
+            <img
+              src={STUDIO_OFFICE_IMAGE}
+              alt="CloudEnd Solutions Galle workspace"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/25"
+            />
+            <div className="relative z-10 flex h-full flex-col justify-between p-5 text-white">
+              <span className="text-xs font-medium text-white/90">
+                Levelup with the world trends
+              </span>
+              <div className="self-end rounded-full bg-black/55 px-3.5 py-1.5 text-[11px] font-medium text-white backdrop-blur-md">
+                Empowering businesses with smart IT ecosystems.
               </div>
             </div>
           </div>
-        </section>
+        </div>
       </section>
-      <section
-        id="contact"
-        className="flex flex-col gap-10 px-10 py-20 sm:px-20"
-      >
-        <div className="flex flex-col items-center gap-4">
-          <Capsule className="" text="Let's Build Together" />
-          <h2 className="text-center text-2xl font-bold text-white sm:text-left">
-            Ready to Elevate Your Business?
+
+      {/* Comparison Section */}
+      <section id="why-us" className="mx-auto max-w-5xl px-6 py-20">
+        <div className="text-center">
+          <h2 className="text-3xl font-semibold tracking-tight text-[#111315] sm:text-4xl">
+            Fast delivery. Clear scope. Forever your edge.
           </h2>
-          <p className="max-w-125 text-sm tracking-widest text-[#9CA3AF] sm:text-center">
-            Contact us today to discuss your project and discover how our
-            expertise can help you achieve your goals.
+          <p className="mt-2.5 text-sm text-slate-500">
+            Fragmented IT vendors slow growth down. CloudEnd Solutions makes
+            your digital infrastructure unified before we build.
           </p>
         </div>
 
-        <div className="mx-auto flex w-full max-w-4xl flex-col gap-10 rounded-2xl border border-white/10 bg-white/5 p-8 sm:flex-row sm:p-10">
-          <div className="flex flex-1 flex-col gap-6">
-            <div className="flex items-center gap-3">
-              <img
-                src="/favicon.svg"
-                alt="CloudEnd Solutions logo"
-                className="h-10 w-10"
-              />
-              <span className="text-lg font-semibold text-white">
-                CloudEnd Solutions
-              </span>
+        <div className="mt-12 divide-y divide-slate-100 border-y border-slate-100">
+          {comparisonRows.map((row) => (
+            <div
+              key={row.cloudend}
+              className="grid grid-cols-1 items-center gap-3 py-4 sm:grid-cols-12"
+            >
+              <p className="text-sm text-slate-400 sm:col-span-5 sm:text-right">
+                {row.legacy}
+              </p>
+              <div className="hidden justify-center text-slate-400 sm:col-span-2 sm:flex">
+                →
+              </div>
+              <p className="text-sm font-semibold text-[#111315] sm:col-span-5">
+                {row.cloudend}
+              </p>
             </div>
-            <ul className="flex flex-col gap-4 text-sm text-[#9CA3AF]">
-              <li className="flex items-start gap-3">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-5 w-5 shrink-0 text-theme"
-                >
-                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                  <circle cx="12" cy="10" r="3" />
-                </svg>
-                23/10 Sri Rewatha Mawatha, Galle 8000, Sri Lanka
-              </li>
-              <li className="flex items-center gap-3">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-5 w-5 shrink-0 text-theme"
-                >
-                  <path d="M4 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L14 13l5 2v4a2 2 0 0 1-2 2C9.163 21 3 14.837 3 7a2 2 0 0 1 2-2Z" />
-                </svg>
-                +94 71 378 9640
-              </li>
-            </ul>
-          </div>
+          ))}
+        </div>
 
-          <form
-            onSubmit={handleContactSubmit}
-            className="flex flex-1 flex-col gap-4"
-          >
-            <label className="flex flex-col gap-2 text-sm text-white">
-              Email address
-              <input
-                type="email"
-                required
-                onChange={(event) => setContactEmail(event.target.value)}
-                placeholder="you@company.com"
-                className="rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition-colors duration-300 placeholder:text-white/30 focus:border-theme/50"
-              />
-            </label>
-            <Button
-              text={contactSubmitted ? "Request Sent" : "Send Request"}
-              varient="default"
-              className="w-full"
+        <div className="mt-6 flex items-center justify-center gap-8">
+          <span className="rounded-full bg-slate-100 px-3.5 py-1 text-xs font-medium text-slate-500">
+            Other vendors
+          </span>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#16A8F8] px-4 py-1 text-xs font-semibold text-white shadow-xs">
+            <img
+              src="/favicon.svg"
+              alt=""
+              className="h-3.5 w-3.5 brightness-0 invert"
             />
-            <p className="text-xs text-[#9CA3AF]">
-              We will get in touch with you as soon as possible.
-            </p>
-          </form>
+            <span>cloudend</span>
+          </span>
         </div>
       </section>
 
-      <footer className="border-t border-white/10 px-10 py-10 sm:px-20">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 sm:flex-row sm:justify-between">
-          <div className="flex max-w-70 flex-col gap-3">
-            <div className="flex items-center gap-2">
-              <img
-                src="/favicon.svg"
-                alt="CloudEnd Solutions logo"
-                className="h-8 w-8"
-              />
-              <span className="font-semibold text-white">
-                CloudEnd Solutions
-              </span>
-            </div>
-            <p className="text-sm text-[#9CA3AF]">
-              Engineering the future with smart IT solutions for growing
-              businesses.
-            </p>
+      {/* Filterable Works & Comprehensive IT Ecosystems Deck */}
+      <section id="services" className="mx-auto max-w-6xl px-6 py-20">
+        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <p className="text-xs font-medium text-slate-400">Our Expertise</p>
+            <h2 className="mt-1 text-3xl font-semibold tracking-tight text-[#111315] sm:text-4xl">
+              Comprehensive IT Ecosystems
+            </h2>
           </div>
 
-          <div className="flex flex-col gap-3">
-            <span className="ghost-text">Services</span>
-            {services.map((service) => (
-              <a
-                key={service.title}
-                href="#services"
-                className="text-sm text-[#9CA3AF] transition-colors duration-300 hover:text-theme"
+          <div className="flex flex-wrap gap-1.5 rounded-full border border-slate-200 bg-slate-50 p-1">
+            {[
+              "All",
+              "Commerce & Ledger",
+              "Web & Growth",
+              "Enterprise POS & SAP",
+            ].map((cat) => {
+              const active = selectedCategory === cat;
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition-all ${
+                    active
+                      ? "bg-[#111315] text-white shadow-2xs"
+                      : "text-slate-600 hover:text-[#111315]"
+                  }`}
+                >
+                  {cat}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredServices.map((service) => (
+            <motion.div
+              key={service.id}
+              layout
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: "some" }}
+              className={`group relative flex min-h-[300px] flex-col justify-between overflow-hidden rounded-3xl bg-gradient-to-br ${service.accent} p-6 text-white shadow-[0_14px_34px_-14px_rgba(15,23,42,0.35)]`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="rounded-full bg-white/15 px-3 py-1 text-[11px] font-medium text-white backdrop-blur-md">
+                  {service.category}
+                </span>
+                <span className="rounded-full bg-black/35 px-2.5 py-1 text-[11px] font-medium text-sky-300">
+                  {service.badge}
+                </span>
+              </div>
+
+              <div className="my-6 space-y-2">
+                <h3 className="text-2xl font-semibold tracking-tight text-white">
+                  {service.title}
+                </h3>
+                <p className="text-sm leading-relaxed text-white/80">
+                  {service.description}
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-1.5 border-t border-white/15 pt-4">
+                {service.metrics.map((m) => (
+                  <span
+                    key={m}
+                    className="rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-medium text-white/90"
+                  >
+                    {m}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Process Section: Interactive 4-Step Delivery Pipeline with Lottie */}
+      <section id="process" className="mx-auto max-w-5xl px-6 py-20">
+        <div className="text-center">
+          <p className="text-xs font-medium text-[#16A8F8]">
+            Your Future | Our Responsibility
+          </p>
+          <h2 className="mt-1 text-3xl font-semibold tracking-tight text-[#111315] sm:text-4xl">
+            Start Your Digital Transformation Today
+          </h2>
+          <p className="mx-auto mt-2.5 max-w-xl text-sm text-slate-500">
+            From custom web development to enterprise-level software
+            integrations, we provide end-to-end solutions for businesses of all
+            sizes.
+          </p>
+        </div>
+
+        <div className="mt-10 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+          {workflowSteps.map((s, idx) => {
+            const active = idx === activeStepIndex;
+            return (
+              <button
+                key={s.title}
+                type="button"
+                onClick={() => setActiveStepIndex(idx)}
+                className={`rounded-2xl border p-4 text-left transition-all ${
+                  active
+                    ? "border-[#111315] bg-[#111315] text-white shadow-sm"
+                    : "border-slate-200 bg-slate-50/70 text-[#111315] hover:bg-slate-100"
+                }`}
               >
-                {service.title}
-              </a>
+                <span
+                  className={`text-xs font-semibold ${
+                    active ? "text-[#38BDF8]" : "text-slate-400"
+                  }`}
+                >
+                  {s.step}
+                </span>
+                <p className="mt-1 text-sm font-semibold">{s.title}</p>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="mt-5 grid grid-cols-1 items-center gap-8 rounded-3xl border border-slate-200 bg-slate-50/60 p-6 sm:p-8 lg:grid-cols-12">
+          <div className="relative h-56 w-full overflow-hidden rounded-2xl border border-slate-200/80 bg-white lg:col-span-6">
+            {workflowSteps.map((step, idx) => (
+              <iframe
+                key={step.title}
+                title={`${step.title} workflow animation`}
+                loading="eager"
+                src={step.animation}
+                className="pointer-events-none absolute inset-0 h-full w-full border-0 transition-opacity duration-300"
+                style={{ opacity: idx === activeStepIndex ? 1 : 0 }}
+              />
             ))}
           </div>
 
-          <div className="flex flex-col gap-3">
-            <span className="ghost-text">Company</span>
-            <a
-              href="#home"
-              className="text-sm text-[#9CA3AF] transition-colors duration-300 hover:text-theme"
-            >
-              About Us
-            </a>
-            <a
-              href="#contact"
-              className="text-sm text-[#9CA3AF] transition-colors duration-300 hover:text-theme"
-            >
-              Contact
-            </a>
+          <div className="space-y-4 lg:col-span-6">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentStep.title}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.2 }}
+                className="space-y-2"
+              >
+                <span className="inline-block rounded-full bg-[#16A8F8]/10 px-3 py-1 text-xs font-semibold text-[#0D96E3]">
+                  Step {currentStep.step} / 04
+                </span>
+                <h3 className="text-2xl font-semibold text-[#111315]">
+                  {currentStep.title}
+                </h3>
+                <p className="text-sm leading-relaxed text-slate-600">
+                  {currentStep.description}
+                </p>
+              </motion.div>
+            </AnimatePresence>
+
+            <div className="flex items-center gap-2.5 pt-2">
+              <button
+                type="button"
+                onClick={() =>
+                  setActiveStepIndex((prev) => Math.max(0, prev - 1))
+                }
+                disabled={activeStepIndex === 0}
+                className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-medium text-[#111315] transition-colors hover:border-slate-400 disabled:opacity-35"
+              >
+                Previous
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  setActiveStepIndex((prev) =>
+                    Math.min(workflowSteps.length - 1, prev + 1),
+                  )
+                }
+                disabled={activeStepIndex === workflowSteps.length - 1}
+                className="rounded-full bg-[#111315] px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-[#272B30] disabled:opacity-35"
+              >
+                Next Step
+              </button>
+            </div>
           </div>
         </div>
-        <p className="mt-10 text-center text-xs text-white/30">
-          © {new Date().getFullYear()} CloudEnd Solutions. All rights reserved.
-        </p>
-      </footer>
-    </>
+      </section>
+
+      {/* FAQ Section */}
+      <section id="faq" className="mx-auto max-w-2xl px-6 py-20">
+        <h2 className="text-center text-3xl font-semibold tracking-tight text-[#111315] sm:text-4xl">
+          Questions we hear the most
+        </h2>
+
+        <div className="mt-10 divide-y divide-slate-200/80 border-b border-slate-200/80">
+          {faqs.map((faq, idx) => {
+            const isOpen = openFaqIndex === idx;
+            return (
+              <div key={faq.question} className="py-4">
+                <button
+                  type="button"
+                  onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
+                  className="flex w-full items-center justify-between gap-4 text-left text-sm font-medium text-[#111315] transition-colors hover:text-[#16A8F8]"
+                >
+                  <span>{faq.question}</span>
+                  <span
+                    className={`text-xs text-slate-400 transition-transform duration-200 ${
+                      isOpen ? "rotate-180" : ""
+                    }`}
+                  >
+                    ⌄
+                  </span>
+                </button>
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.p
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden pt-2.5 text-xs leading-relaxed text-slate-500 sm:text-sm"
+                    >
+                      {faq.answer}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Bottom Dual Conversion Cards + Alpine Ridge + Black Footer */}
+      <div
+        id="contact"
+        className="mx-auto max-w-[1360px] px-3 pb-3 sm:px-5 sm:pb-5"
+      >
+        <div className="relative pt-8">
+          <div className="relative z-20 mx-auto grid max-w-4xl grid-cols-1 gap-4 px-4 sm:px-6 md:grid-cols-2">
+            <div className="flex flex-col justify-between rounded-3xl bg-[#16A8F8] p-7 text-white shadow-[0_20px_50px_-15px_rgba(22,168,248,0.45)] sm:p-8">
+              <div>
+                <h3 className="text-2xl font-semibold tracking-tight">
+                  Not sure how we can help?
+                </h3>
+                <p className="mt-2.5 text-xs leading-relaxed text-white/90 sm:text-sm">
+                  Book a free consultation where our team at CloudEnd Solutions
+                  audits your current systems and maps out the right IT
+                  architecture.
+                </p>
+              </div>
+
+              <div className="mt-8">
+                <a
+                  href="tel:+94713789640"
+                  className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-xs font-semibold text-[#111315] shadow-xs transition-transform hover:scale-[1.02]"
+                >
+                  <span>📅</span>
+                  <span>Call +94 71 378 9640</span>
+                </a>
+              </div>
+            </div>
+
+            <div className="flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-7 text-[#111315] shadow-[0_20px_50px_-15px_rgba(15,23,42,0.14)] sm:p-8">
+              <div>
+                <h3 className="text-2xl font-semibold tracking-tight">
+                  Ready to build?
+                </h3>
+                <p className="mt-2 text-xs leading-relaxed text-slate-500 sm:text-sm">
+                  Already know what you&apos;re looking for? Leave your email
+                  and we&apos;ll turn your goals into concrete plans of action.
+                </p>
+              </div>
+
+              <form onSubmit={handleContactSubmit} className="mt-6 space-y-2.5">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="email"
+                    required
+                    value={contactEmail}
+                    onChange={(e) => {
+                      setContactEmail(e.target.value);
+                      if (contactSubmitted) setContactSubmitted(false);
+                    }}
+                    placeholder="you@company.com"
+                    className="w-full rounded-full border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs text-[#111315] outline-none placeholder:text-slate-400 focus:border-[#111315] focus:bg-white"
+                  />
+                  <button
+                    type="submit"
+                    className="shrink-0 rounded-full bg-[#111315] px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#272B30]"
+                  >
+                    {contactSubmitted ? "Sent ✓" : "📞 Send"}
+                  </button>
+                </div>
+                <p className="text-[11px] text-slate-500">
+                  {contactSubmitted
+                    ? `Thank you! We will get in touch at ${contactEmail}.`
+                    : "We will get in touch with you as soon as possible."}
+                </p>
+              </form>
+            </div>
+          </div>
+
+          <div className="-mt-16 rounded-[28px] bg-[#070809] text-white">
+            <div className="relative h-36 w-full overflow-hidden sm:h-60">
+              <img
+                src={FOOTER_RIDGE_IMAGE}
+                alt="Alpine mountain ridge"
+                className="h-full w-full object-cover object-center opacity-75"
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-b from-white via-transparent to-[#070809]"
+              />
+            </div>
+
+            <footer className="mx-auto max-w-5xl px-6 pt-8 pb-10">
+              <div className="flex flex-col justify-between gap-8 sm:flex-row sm:items-start">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2.5">
+                    <img
+                      src="/favicon.svg"
+                      alt="CloudEnd Solutions logo"
+                      className="h-6 w-6 brightness-0 invert"
+                    />
+                    <span className="text-xl font-bold tracking-tight text-white">
+                      cloudend<sup className="text-[10px] font-normal">®</sup>
+                    </span>
+                  </div>
+                  <p className="max-w-xs text-xs leading-relaxed text-white/60">
+                    23/10 Sri Rewatha Mawatha, Galle 8000, Sri Lanka
+                  </p>
+                </div>
+
+                <div className="flex flex-col items-start gap-3 sm:items-end">
+                  <nav className="flex flex-wrap gap-5 text-xs text-white/75">
+                    <a href="#about" className="hover:text-white">
+                      About
+                    </a>
+                    <a href="#why-us" className="hover:text-white">
+                      Solution
+                    </a>
+                    <a href="#services" className="hover:text-white">
+                      Works
+                    </a>
+                    <a href="#process" className="hover:text-white">
+                      Process
+                    </a>
+                    <a href="#faq" className="hover:text-white">
+                      FAQ
+                    </a>
+                  </nav>
+                  <a
+                    href="tel:+94713789640"
+                    className="text-xs font-medium text-[#16A8F8] hover:underline"
+                  >
+                    +94 71 378 9640
+                  </a>
+                </div>
+              </div>
+
+              <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 text-[11px] text-white/45 sm:flex-row">
+                <span>
+                  © {new Date().getFullYear()} CloudEnd Solutions. All rights
+                  reserved.
+                </span>
+                <span>Engineering the future with smart IT solutions</span>
+              </div>
+            </footer>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
